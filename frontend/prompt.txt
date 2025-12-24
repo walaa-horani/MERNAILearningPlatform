@@ -1,0 +1,246 @@
+You are a senior full-stack engineer building a COMPLETE production-ready frontend
+for an existing Node.js + Express + MongoDB backend.
+
+THIS IS CRITICAL:
+- DO NOT modify backend logic, controllers, routes, or database schemas.
+- DO NOT invent new endpoints or rename existing ones.
+- Use ONLY the API endpoints explicitly listed below.
+- Match request bodies and response structures exactly.
+- Authentication is already implemented using JWT (req.user exists).
+- Use axios with a single baseURL (NO apiPaths abstraction).
+- The backend already integrates Gemini AI — frontend must consume it correctly.
+
+---
+
+## PROJECT OVERVIEW
+
+This is an AI-powered learning assistant.
+
+Users can:
+- Register / Login
+- Upload PDF documents
+- PDFs are parsed, chunked, and processed asynchronously
+- Generate Flashcards via Gemini AI
+- Generate Quizzes via Gemini AI
+- Study Flashcards
+- Take Quizzes and view results
+- Chat with the document (RAG)
+- Ask AI to explain a specific concept from the document
+- Generate document summaries
+- Track learning progress via dashboard
+
+---
+
+## FRONTEND TECH STACK (MANDATORY)
+
+- React vite
+- Tailwind CSS
+- shadcn/ui
+- Axios (single axiosInstance with baseURL)
+- React Hook Form
+- Client-side auth guard
+- Clean and scalable folder structure
+
+---
+
+## AUTH API (USE AS-IS)
+
+- POST /api/auth/register
+- POST /api/auth/login
+- GET  /api/auth/me
+
+JWT is required for all protected routes.
+
+---
+
+## DOCUMENTS API (STRICT)
+
+- POST   /api/documents/upload
+  - multipart/form-data
+  - fields: file (PDF), title
+  - document status: processing | ready | failed
+
+- GET    /api/documents
+- GET    /api/documents/:id
+- PUT    /api/documents/:id
+- DELETE /api/documents/:id
+
+Each document includes:
+- flashcardCount
+- quizCount
+
+---
+
+## FLASHCARDS API
+
+- GET    /api/flashcards
+- GET    /api/flashcards/:documentId
+- POST   /api/flashcards/:cardId/review
+- PUT    /api/flashcards/:cardId/star
+- DELETE /api/flashcards/:id
+
+Flashcards are GENERATED via Gemini (not static).
+
+---
+
+## QUIZZES API (IMPORTANT – USE EXACT ROUTES)
+
+- GET    /api/quizzes/:documentId
+- GET    /api/quizzes/quiz/:id
+- POST   /api/quizzes/:id/submit
+- GET    /api/quizzes/:id/results
+- DELETE /api/quizzes/:id
+
+Submit quiz payload:
+{
+  answers: [
+    { questionIndex, selectedAnswer }
+  ]
+}
+
+---
+
+## AI / GEMINI API (VERY IMPORTANT)
+
+These endpoints trigger Gemini AI on the backend.
+Frontend MUST provide correct payloads and UI flows.
+
+### Generate Flashcards
+- POST /api/ai/generate-flashcards
+Body:
+{
+  documentId,
+  count
+}
+
+### Generate Quiz
+- POST /api/ai/generate-quiz
+Body:
+{
+  documentId,
+  numQuestions,
+  title
+}
+
+### Generate Summary
+- POST /api/ai/generate-summary
+Body:
+{
+  documentId
+}
+
+### Chat with Document (RAG)
+- POST /api/ai/chat
+Body:
+{
+  documentId,
+  question
+}
+
+### Explain Concept
+- POST /api/ai/explain-concept
+Body:
+{
+  documentId,
+  concept
+}
+
+### Get Chat History
+- GET /api/ai/chat/:documentId
+
+---
+
+## PROGRESS / DASHBOARD API
+
+- GET /api/progress/dashboard
+
+Response includes:
+- overview:
+  - totalDocuments
+  - totalFlashcardSets
+  - totalFlashcards
+  - reviewedFlashcards
+  - starredFlashcards
+  - totalQuizzes
+  - completedQuizzes
+  - averageScore
+  - studyStreak
+- recent quizzes only
+
+---
+
+## REQUIRED FRONTEND PAGES
+
+### Auth
+- /login
+- /register
+
+### Dashboard
+- /dashboard
+  - Overview statistic cards
+  - Recent quizzes
+  - Average score visualization
+
+### Documents
+- /documents
+  - Upload PDF form
+  - Documents table
+  - Status badges (processing / ready / failed)
+  - Actions: Generate Flashcards, Generate Quiz, Summary, Chat
+
+- /documents/:id
+  - Document details
+  - Flashcards count
+  - Quizzes count
+  - AI actions panel
+
+### Flashcards
+- /flashcards/:documentId
+  - Study mode
+  - Review tracking
+  - Star toggle
+  - Difficulty badge
+
+### Quizzes
+- /quizzes/:documentId
+- /quiz/:id
+- /quiz/:id/results
+
+### AI Chat
+- Embedded chat UI per document
+- Message history
+- Streaming-style UX (simulated if needed)
+
+---
+
+## UI REQUIREMENTS
+
+- Use shadcn/ui components:
+  - Card, Button, Input, Textarea, Table, Badge
+  - Dialog, Tabs, Progress, Skeleton
+- Tailwind for layout
+- Responsive design
+- Loading & error states
+- Disable AI actions when document.status !== "ready"
+
+---
+
+## OUTPUT REQUIREMENTS
+
+Generate:
+1. Full react vite App Router structure
+2. axiosInstance with baseURL
+3. Auth handling + protected routes
+4. Services:
+   - documentService
+   - flashcardService
+   - quizService
+   - progressService
+   - aiService
+5. All pages and components wired correctly
+6. Clean, production-quality code
+
+DO NOT explain concepts.
+DO NOT summarize.
+DO NOT ask questions.
+JUST BUILD THE APP.
