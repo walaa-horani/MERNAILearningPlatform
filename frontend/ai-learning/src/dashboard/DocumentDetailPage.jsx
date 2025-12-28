@@ -60,7 +60,8 @@ function DocumentDetailPage() {
     const fetchChatHistory = async () => {
         try {
             const data = await aiService.getChatHistory(id);
-            setChatMessages(data.messages || []);
+            // Backend returns: { success: true, data: [messages], message: "..." }
+            setChatMessages(data.data || []);
         } catch (err) {
             console.error("Failed to load chat history:", err);
         }
@@ -116,7 +117,7 @@ function DocumentDetailPage() {
             setAiError("");
             setSummary("");
             const data = await aiService.generateSummary(id);
-            setSummary(data.summary || "Summary generated successfully!");
+            setSummary(data.data?.summary || "Summary generated successfully!");
         } catch (err) {
             setAiError(err.message || "Failed to generate summary");
         } finally {
@@ -132,7 +133,7 @@ function DocumentDetailPage() {
             setChatMessages([
                 ...chatMessages,
                 { role: "user", content: `Explain: ${conceptText}` },
-                { role: "assistant", content: data.explanation || data.answer },
+                { role: "assistant", content: data.data?.explanation || data.data?.answer || "Explanation generated" },
             ]);
             setConceptText("");
         } catch (err) {
@@ -155,7 +156,7 @@ function DocumentDetailPage() {
             const data = await aiService.chatWithDocument(id, userMessage);
             setChatMessages((prev) => [
                 ...prev,
-                { role: "assistant", content: data.answer || data.response },
+                { role: "assistant", content: data.data?.answer || data.data?.response || "Response generated" },
             ]);
         } catch (err) {
             setChatMessages((prev) => [

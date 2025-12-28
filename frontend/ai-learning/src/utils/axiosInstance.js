@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: "https://mernailearningplatform.onrender.com",
+    baseURL: "https://mernaillearningplatform.onrender.com",
     withCredentials: true,
 });
 
