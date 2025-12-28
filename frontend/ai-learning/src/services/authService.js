@@ -40,7 +40,7 @@ export const login = async (email, password) => {
 // =====================
 export const getMe = async () => {
     try {
-        const response = await axiosInstance.get("/auth/me");
+        const response = await axiosInstance.get("/auth/profile");
         return response.data;
     } catch (error) {
         throw error.response?.data || {

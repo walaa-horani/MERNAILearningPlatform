@@ -10,8 +10,8 @@ const generateToken = (id) => {
 const sendTokenResponse = (res, token) => {
     res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        secure: true, // Always true for cross-origin cookies
+        sameSite: "none", // Required for cross-origin
         maxAge: 7 * 24 * 60 * 60 * 1000,
     })
 
@@ -93,8 +93,8 @@ export const login = async (req, res) => {
         // Set cookie
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            secure: true,
+            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000,
         })
 
