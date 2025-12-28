@@ -1,3 +1,4 @@
+// Triggering Vercel redeploy to activate routing fixes
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/authContext";
 import LoginPage from "./auth/LoginPage";
