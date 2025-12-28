@@ -1,0 +1,8 @@
+{
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/frontend/ai-learning/index.html"
+        }
+    ]
+}
