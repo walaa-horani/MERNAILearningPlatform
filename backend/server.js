@@ -27,10 +27,31 @@ const app = express()
 connectDB()
 
 // Middleware to handle CORS
+const allowedOrigins = [
+    "https://mernai-learning-platform.vercel.app",
+    /\.vercel\.app$/ // Matches any Vercel preview/branch URLs
+];
+
 app.use(
     cors({
-        origin: "https://mernai-learning-platform.vercel.app",
-        methods: ["GET", "POST", "PUT", "DELETE"],
+        origin: function (origin, callback) {
+            // allow requests with no origin (like mobile apps or curl requests)
+            if (!origin) return callback(null, true);
+
+            const isAllowed = allowedOrigins.some(allowed => {
+                if (allowed instanceof RegExp) {
+                    return allowed.test(origin);
+                }
+                return allowed === origin;
+            });
+
+            if (isAllowed) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"],
         credentials: true,
     })
