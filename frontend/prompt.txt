@@ -28,6 +28,7 @@ Users can:
 - Ask AI to explain a specific concept from the document
 - Generate document summaries
 - Track learning progress via dashboard
+- make starred cards count update in real-time
 
 ---
 
