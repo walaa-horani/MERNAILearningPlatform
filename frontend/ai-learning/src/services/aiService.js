@@ -90,7 +90,7 @@ export const explainConcept = async (documentId, concept) => {
 // =====================
 export const getChatHistory = async (documentId) => {
     try {
-        const response = await axiosInstance.get(`/ai/chat/${documentId}`);
+        const response = await axiosInstance.get(`/ai/chat-history/${documentId}`);
         return response.data;
     } catch (error) {
         throw error.response?.data || {

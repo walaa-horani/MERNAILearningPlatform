@@ -193,7 +193,7 @@ export const chatWithContext = async (question, chunks) => {
 If the answer is not in the context, say so.
 
 Context:
-${context}
+${context || "No text was provided or extracted from the document."}
 
 Question: ${question}
 
@@ -225,7 +225,7 @@ Provide a clear, educational explanation that's easy to understand.
 Include examples if relevant.
 
 Context:
-${context.substring(0, 10000)}`;
+${context ? context.substring(0, 10000) : "No text was provided or extracted from the document."}`;
 
     try {
         const response = await ai.models.generateContent({

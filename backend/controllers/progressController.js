@@ -9,22 +9,37 @@ export const getDashboard = async (req, res, next) => {
     try {
         const userId = req.user._id;
 
-        // =========================
-        // Counts
-        // =========================
-        const totalDocuments = await Document.countDocuments({ userId });
-        const totalFlashcardSets = await Flashcard.countDocuments({ userId });
-        const totalQuizzes = await Quiz.countDocuments({ userId });
-        const completedQuizzes = await Quiz.countDocuments({
-            userId,
-            completedAt: { $ne: null },
-        });
+        // Run independent database queries concurrently to improve performance
+        const [
+            totalDocuments,
+            flashcardSets,
+            totalQuizzes,
+            completedQuizzes,
+            quizzes,
+            recentDocuments,
+            recentQuizzes
+        ] = await Promise.all([
+            Document.countDocuments({ userId }),
+            Flashcard.find({ userId }),
+            Quiz.countDocuments({ userId }),
+            Quiz.countDocuments({ userId, completedAt: { $ne: null } }),
+            Quiz.find({ userId, completedAt: { $ne: null } }),
+            Document.find({ userId })
+                .sort({ lastAccessed: -1 })
+                .limit(5)
+                .select("title fileName lastAccessed status"),
+            Quiz.find({ userId })
+                .sort({ createdAt: -1 })
+                .limit(5)
+                .populate("documentId", "title")
+                .select("title score totalQuestions completedAt")
+        ]);
+
+        const totalFlashcardSets = flashcardSets.length;
 
         // =========================
         // Flashcard statistics
         // =========================
-        const flashcardSets = await Flashcard.find({ userId });
-
         let totalFlashcards = 0;
         let reviewedFlashcards = 0;
         let starredFlashcards = 0;
@@ -44,11 +59,6 @@ export const getDashboard = async (req, res, next) => {
         // =========================
         // Quiz statistics
         // =========================
-        const quizzes = await Quiz.find({
-            userId,
-            completedAt: { $ne: null },
-        });
-
         const averageScore =
             quizzes.length > 0
                 ? Math.round(
@@ -57,19 +67,6 @@ export const getDashboard = async (req, res, next) => {
                 )
                 : 0;
 
-        // =========================
-        // Recent activity
-        // =========================
-        const recentDocuments = await Document.find({ userId })
-            .sort({ lastAccessed: -1 })
-            .limit(5)
-            .select("title fileName lastAccessed status");
-
-        const recentQuizzes = await Quiz.find({ userId })
-            .sort({ createdAt: -1 })
-            .limit(5)
-            .populate("documentId", "title")
-            .select("title score totalQuestions completedAt");
 
         // =========================
         // Study streak (mock)

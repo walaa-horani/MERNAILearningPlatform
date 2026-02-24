@@ -202,11 +202,16 @@ export const chat = async (req, res, next) => {
         }
 
         // Find relevant chunks
-        const relevantChunks = findRelevantChunks(
+        let relevantChunks = findRelevantChunks(
             document.chunks,
             question,
             3
         );
+
+        // Fallback to first few chunks if no exact keyword match is found
+        if (relevantChunks.length === 0 && document.chunks && document.chunks.length > 0) {
+            relevantChunks = document.chunks.slice(0, 3);
+        }
 
         const chunkIndices = relevantChunks.map(
             (c) => c.chunkIndex
@@ -298,11 +303,16 @@ export const explainConcept = async (req, res, next) => {
         }
 
         // Find relevant chunks for the concept
-        const relevantChunks = findRelevantChunks(
+        let relevantChunks = findRelevantChunks(
             document.chunks,
             concept,
             3
         );
+
+        // Fallback to first few chunks if no exact keyword match is found
+        if (relevantChunks.length === 0 && document.chunks && document.chunks.length > 0) {
+            relevantChunks = document.chunks.slice(0, 3);
+        }
 
 
         const context = relevantChunks

@@ -120,7 +120,8 @@ export const findRelevantChunks = (chunks, query, maxChunks = 3) => {
         .filter((word) => word && !stopWords.has(word));
 
     const scoredChunks = chunks.map((chunk) => {
-        const text = chunk.content.toLowerCase();
+        const plainChunk = typeof chunk.toObject === 'function' ? chunk.toObject() : chunk;
+        const text = plainChunk.content.toLowerCase();
         let score = 0;
 
         for (const word of queryWords) {
@@ -129,7 +130,7 @@ export const findRelevantChunks = (chunks, query, maxChunks = 3) => {
             }
         }
 
-        return { ...chunk, score };
+        return { ...plainChunk, score };
     });
 
     return scoredChunks
