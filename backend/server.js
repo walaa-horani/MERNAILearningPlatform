@@ -28,10 +28,7 @@ connectDB()
 
 // Middleware to handle CORS
 const allowedOrigins = [
-    "https://mernai-learning-platform.vercel.app",
-    "https://mernailearningplatform.onrender.com",
     "http://localhost:5174",
-    "http://localhost:5173",
     /\.vercel\.app$/ // Matches any Vercel preview/branch URLs
 ];
 
