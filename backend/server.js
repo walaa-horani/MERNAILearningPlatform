@@ -29,6 +29,8 @@ connectDB()
 // Middleware to handle CORS
 const allowedOrigins = [
     "http://localhost:5174",
+   
+    process.env.FRONTEND_URL,
     /\.vercel\.app$/ // Matches any Vercel preview/branch URLs
 ];
 
