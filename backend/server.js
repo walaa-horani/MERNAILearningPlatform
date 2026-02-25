@@ -7,6 +7,7 @@ import path from "path"
 import { fileURLToPath } from "url"
 
 import cookieParser from "cookie-parser"
+import compression from "compression"
 
 import connectDB from "./config/db.js"
 import authRoutes from "./routes/authRoutes.js"
@@ -26,13 +27,20 @@ const app = express()
 // Connect to MongoDB
 connectDB()
 
+// Compress all responses
+app.use(compression())
+
 // Middleware to handle CORS
-const allowedOrigins = [
-    "http://localhost:5174",
-   
-    process.env.FRONTEND_URL,
-    /\.vercel\.app$/ // Matches any Vercel preview/branch URLs
-];
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(",")
+    : [];
+
+if (process.env.FRONTEND_URL) {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
+// Add the default regex for vercel preview URLs
+allowedOrigins.push(/\.vercel\.app$/);
 
 app.use(
     cors({
